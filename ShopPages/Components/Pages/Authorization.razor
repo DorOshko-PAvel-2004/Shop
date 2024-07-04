@@ -1,0 +1,34 @@
+﻿@page "/authorization"
+@rendermode InteractiveServer
+@using ShopModels.Controllers.API
+@using ShopModels.Models
+<h3>Authorization</h3>
+
+@code {
+    public static string Registration_Message = "";
+    public static string? login = "";
+    public static string? password = "";
+    private void Authoriz()
+    {
+        Unknown api = new Unknown();
+        UserData user = new UserData();
+        user.Login=login;
+        user.Password = password;
+        api.Authorization(user);
+    }
+}
+<Editform method="post" class="form-authorization" name ="Author">
+    <AntiforgeryToken />
+    <p>
+        <label>Login</label><br />
+        <input type="text" name="Name" @bind-value=login required />
+    </p>
+    <p>
+        <label>Password</label><br />
+        <input type="password" name="Password" @bind-value=password required />
+    </p>
+    <p>
+        <input type="submit" @onclick="Authoriz" value="Enter" />
+    </p>
+</Editform>
+<a class="a-message">@Registration_Message</a>

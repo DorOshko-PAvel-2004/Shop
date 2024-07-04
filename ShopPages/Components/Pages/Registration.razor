@@ -1,0 +1,38 @@
+﻿@page "/registration"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Antiforgery
+@using Microsoft.AspNetCore.Mvc
+@using ShopModels.Controllers.API
+@inject IAntiforgery Antiforgery
+@inject NavigationManager Navigation
+
+<h3>Registration</h3>
+
+@code {
+    public static string Registration_Message = "";
+    public static string? login="";
+    public static string? password="";
+    public void Regist()
+    {
+        Unknown controller = new Unknown();
+        string response = controller.Regist();
+        switch(response)
+        {
+            case "Error":break;
+            default: Navigation.NavigateTo(response);break;
+        }
+    }
+}
+<Editform method="post" class="form-authorization" name ="Registr">
+    <AntiforgeryToken />
+    <p>
+        <label>Login:</label> <br />
+        <input type="text" name="login" @bind-value=login required>
+    </p>
+    <p>
+        <lavel>Password:</lavel><br />
+        <input type="password" name="password" @bind-value=password required>
+    </p>
+    <p><input type="submit" @onclick="Regist" value="Registrate"></p>
+</Editform>
+<a class="a-message">@Registration_Message</a>

@@ -1,0 +1,30 @@
+﻿@page "/products"
+@rendermode InteractiveServer
+@using ShopModels.Controllers.API;
+@using ShopModels.Models;
+@using ShopPages.Components.Layout
+@using ShopPages.Components.Models
+
+<PageTitle>Products</PageTitle>
+<h1>Products</h1>
+<UserInterface></UserInterface>
+@* else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in products)
+            {
+                <tr>
+                    <td>@product.Name</td>
+                    <td>@product.Price</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+} *@

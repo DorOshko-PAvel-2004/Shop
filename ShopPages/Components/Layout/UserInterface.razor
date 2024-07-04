@@ -1,0 +1,117 @@
+﻿@using System.Linq
+@using ShopModels.Controllers.DBConnection
+@using ShopModels.Controllers.Service
+@using ShopModels.Models
+@using ShopPages.Components.Models
+
+
+<PageTitle>Internet Shop</PageTitle>
+
+<div class="filter-sort-container">
+    <div class="filter">
+        <label for="category-filter">Category:</label>
+        <select id="category-filter" @onchange="FilterProducts">
+            <option value=null>All</option>
+            @foreach (var category in Categories.Select(x=>x.TypeName))
+            {
+                <option value="@category">@category</option>
+            }
+        </select>
+    </div>
+
+    <div class="sort">
+        <label for="sort-by">Sort By:</label>
+        <select id="sort-by" @onchange="SortProducts">
+            <option value="name">Name</option>
+            <option value="price">Price</option>
+        </select>
+    </div>
+
+    <div class="group">
+        <label for="group-by">Group By:</label>
+        <select id="group-by" @onchange="GroupProducts">
+            <option value="none">None</option>
+            <option value="category">Category</option>
+        </select>
+    </div>
+</div>
+
+<div class="product-list">
+    @if (GroupBy == "category")
+    {
+        @foreach (var group in FilteredProducts.GroupBy(p => p.TypeID))
+        {
+            <div class="category-group">
+                <h2>@Categories.First(x=>x.TypeID==group.Key).TypeName</h2>
+                @foreach (var product in group)
+                {
+                    <div class="product-item">
+                        <h3>@product.Name</h3>
+                        <p>@product.Price.ToString("C")</p>
+                    </div>
+                }
+            </div>
+        }
+    }
+    else
+    {
+        @foreach (var product in FilteredProducts)
+        {
+            <div class="product-item">
+                <h3>@product.Name</h3>
+                <p>@product.Price.ToString("C")</p>
+            </div>
+        }
+    }
+</div>
+
+@code {
+    private List<Product> Products { get; set; }
+    private List<Product> FilteredProducts { get; set; }
+    private List<ProductType> Categories { get; set; }
+    private ProductType SelectedCategory { get; set; } = null;
+    private string SortBy { get; set; } = "name";
+    private string GroupBy { get; set; } = "none";
+    ProductService productService = new ProductService();
+    ProductTypeService TypeService = new ProductTypeService();
+    protected override async Task OnInitializedAsync()
+    {
+        Products = productService.Read();
+        FilteredProducts = Products;
+        Categories = TypeService.Read();
+        //FilterProducts();
+    }
+
+    private void FilterProducts(ChangeEventArgs e)
+    {
+        if (e.Value.ToString() == "null")
+        {
+            SelectedCategory = null;
+            FilteredProducts = Products;
+        }
+        else{
+        SelectedCategory = Categories.First(x=>x.TypeName==e.Value.ToString());
+        FilteredProducts = Products
+            .Where(p => p.TypeID == SelectedCategory.TypeID)
+            .ToList();
+        }
+    }
+
+    private void SortProducts(ChangeEventArgs e)
+    {
+        SortBy = e.Value.ToString();
+        if (SortBy == "name")
+        {
+            FilteredProducts = FilteredProducts.OrderBy(p => p.Name).ToList();
+        }
+        else if (SortBy == "price")
+        {
+            FilteredProducts = FilteredProducts.OrderBy(p => p.Price).ToList();
+        }
+    }
+
+    private void GroupProducts(ChangeEventArgs e)
+    {
+        GroupBy = e.Value.ToString();
+    }
+}
